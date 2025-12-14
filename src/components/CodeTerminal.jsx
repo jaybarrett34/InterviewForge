@@ -9,7 +9,7 @@ const WORKING_DIR = `${PROJECT_ROOT}/working`;
 
 const CodeTerminal = () => {
   const { theme } = useTheme();
-  const { updateTestResults } = useSession();
+  const { updateTestResults, requestSave } = useSession();
   const [isRunning, setIsRunning] = useState(false);
   const [terminalId, setTerminalId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -156,7 +156,12 @@ const CodeTerminal = () => {
     setIsRunning(true);
 
     try {
-      // Simply run python3 on solution.py (use \r for PTY execution)
+      // Save the editor content first (if available)
+      if (requestSave) {
+        await requestSave();
+      }
+
+      // Run python3 on solution.py (use \r for PTY execution)
       const command = `cd "${WORKING_DIR}" && python3 solution.py\r`;
       await window.electronAPI.terminal.write(terminalId, command);
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 
 const SessionContext = createContext();
 
@@ -9,6 +9,9 @@ export const SessionProvider = ({ children }) => {
   const [code, setCode] = useState('');
   const [testResults, setTestResults] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Save callback ref - Monaco registers its save function here
+  const saveCallbackRef = useRef(null);
 
   const startNewSession = useCallback((problem) => {
     setCurrentProblem(problem);
@@ -55,6 +58,18 @@ export const SessionProvider = ({ children }) => {
     return (performance.now() - sessionStartTime) / 1000;
   }, [sessionStartTime]);
 
+  // Register a save callback (called by Monaco)
+  const registerSaveCallback = useCallback((callback) => {
+    saveCallbackRef.current = callback;
+  }, []);
+
+  // Request immediate save (called by CodeTerminal before running)
+  const requestSave = useCallback(async () => {
+    if (saveCallbackRef.current) {
+      await saveCallbackRef.current();
+    }
+  }, []);
+
   return (
     <SessionContext.Provider value={{
       currentProblem,
@@ -68,7 +83,9 @@ export const SessionProvider = ({ children }) => {
       updateCode,
       updateTestResults,
       submitSolution,
-      getSessionDuration
+      getSessionDuration,
+      registerSaveCallback,
+      requestSave
     }}>
       {children}
     </SessionContext.Provider>

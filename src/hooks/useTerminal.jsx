@@ -146,8 +146,21 @@ export const useTerminal = ({ onData, onResize, theme = 'dark' }) => {
   }, [theme]); // Only reinit if theme changes, not onData
 
   useEffect(() => {
-    const cleanup = initTerminal();
-    return cleanup;
+    // Small delay to ensure container is fully mounted in DOM
+    const timer = setTimeout(() => {
+      initTerminal();
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      // Cleanup terminal if it was created
+      if (terminalRef.current) {
+        terminalRef.current.dispose();
+        terminalRef.current = null;
+        fitAddonRef.current = null;
+        setIsReady(false);
+      }
+    };
   }, [initTerminal]);
 
   const write = useCallback((data) => {

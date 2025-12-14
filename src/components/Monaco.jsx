@@ -6,7 +6,7 @@ import { DEFAULT_TEMPLATE } from '../utils/solutionTemplate';
 
 const Monaco = () => {
   const { theme } = useTheme();
-  const { code, updateCode } = useSession();
+  const { code, updateCode, registerSaveCallback } = useSession();
   const containerRef = useRef(null);
   const monacoInstanceRef = useRef(null);
   const saveTimeoutRef = useRef(null);
@@ -194,6 +194,29 @@ const Monaco = () => {
       setIsSaving(false);
     }
   }, [solutionPath]);
+
+  // Immediate save function - called before running tests
+  const saveNow = useCallback(async () => {
+    if (!monacoInstanceRef.current || !solutionPath || !window.electronAPI) return;
+
+    // Clear any pending debounced save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+      saveTimeoutRef.current = null;
+    }
+
+    const content = monacoInstanceRef.current.getValue();
+    await saveToFile(content);
+    updateCode(content);
+  }, [solutionPath, saveToFile, updateCode]);
+
+  // Register the save callback with session context
+  useEffect(() => {
+    if (registerSaveCallback) {
+      registerSaveCallback(saveNow);
+      return () => registerSaveCallback(null);
+    }
+  }, [registerSaveCallback, saveNow]);
 
   const handleFormat = () => {
     if (monacoInstanceRef.current) {

@@ -1,0 +1,81 @@
+{
+  "appId": "com.interviewforge.app",
+  "productName": "InterviewForge",
+  "copyright": "Copyright © 2025 InterviewForge Team",
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "package.json",
+    "node_modules/**/*"
+  ],
+  "directories": {
+    "buildResources": "assets",
+    "output": "release"
+  },
+  "mac": {
+    "category": "public.app-category.developer-tools",
+    "icon": "assets/icon.icns",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "arm64"]
+      }
+    ],
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "assets/entitlements.mac.plist",
+    "entitlementsInherit": "assets/entitlements.mac.plist"
+  },
+  "dmg": {
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ],
+    "window": {
+      "width": 540,
+      "height": 400
+    }
+  },
+  "win": {
+    "icon": "assets/icon.ico",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64", "ia32"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "ia32"]
+      }
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  },
+  "linux": {
+    "icon": "assets/icon.png",
+    "target": [
+      "AppImage",
+      "deb",
+      "rpm"
+    ],
+    "category": "Development",
+    "maintainer": "InterviewForge Team"
+  },
+  "publish": null
+}

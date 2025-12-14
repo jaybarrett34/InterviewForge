@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(cd:*)",
+      "Read(working/**)",
+      "Read(claude_instructions/**)",
+      "Read(soul_docs/**)",
+      "Write(working/**)",
+      "Edit(working/**)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(node_modules/**)"
+    ]
+  }
+}
